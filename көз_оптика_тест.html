@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Көз — оптикалық жүйе · Тест</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+  :root{
+    --bg:#0D1117;--sf:#161B22;--sf2:#1E2530;--bd:#30363D;
+    --tx:#E6EDF3;--mt:#7D8590;
+    --gr:#3FB950;--gd:#1A3829;
+    --rd:#F85149;--rdd:#3D1517;
+    --ye:#D29922;--yd:#2D2208;
+    --bl:#58A6FF;--bld:#0D2045;
+    --pu:#BC8CFF;--te:#39D3BB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;padding:24px 16px 60px;}
+  .header{text-align:center;margin-bottom:36px;animation:fd .6s ease both;}
+  .badge{display:inline-block;background:#1A3040;color:var(--te);border:1px solid var(--te);border-radius:20px;padding:4px 16px;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+  .header h1{font-size:clamp(22px,5vw,34px);font-weight:900;line-height:1.2;background:linear-gradient(135deg,var(--te) 0%,var(--bl) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+  .header p{color:var(--mt);font-size:15px;}
+  .pw{max-width:680px;margin:0 auto 32px;}
+  .pm{display:flex;justify-content:space-between;font-size:13px;color:var(--mt);margin-bottom:8px;}
+  .pb{height:6px;background:var(--sf2);border-radius:99px;overflow:hidden;}
+  .pf{height:100%;background:linear-gradient(90deg,var(--te),var(--bl));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1);width:0%;}
+  .card{max-width:680px;margin:0 auto 20px;background:var(--sf);border:1px solid var(--bd);border-radius:16px;overflow:hidden;display:none;animation:su .45s cubic-bezier(.4,0,.2,1) both;}
+  .card.active{display:block;}
+  .ch{padding:20px 24px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;gap:14px;}
+  .qn{flex-shrink:0;width:36px;height:36px;background:#1A3040;border:1.5px solid var(--te);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;color:var(--te);}
+  .qt{font-size:16px;font-weight:700;line-height:1.5;}
+  .qs{margin-top:6px;font-size:13px;color:var(--mt);font-family:'JetBrains Mono',monospace;}
+  .dw{padding:12px 24px;border-bottom:1px solid var(--bd);background:var(--sf2);}
+  .dw svg{display:block;margin:0 auto;}
+  .opts{padding:20px 24px;display:flex;flex-direction:column;gap:10px;}
+  .opt{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px solid var(--bd);border-radius:12px;cursor:pointer;transition:all .2s;background:transparent;color:var(--tx);font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;text-align:left;width:100%;}
+  .opt:hover:not(:disabled){border-color:var(--te);background:#1A3040;}
+  .opt .l{width:28px;height:28px;border-radius:8px;background:var(--sf2);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;flex-shrink:0;color:var(--mt);transition:all .2s;}
+  .opt:hover:not(:disabled) .l{background:var(--te);border-color:var(--te);color:#000;}
+  .opt.ok{border-color:var(--gr);background:var(--gd);color:var(--gr);}
+  .opt.ok .l{background:var(--gr);border-color:var(--gr);color:#fff;}
+  .opt.bad{border-color:var(--rd);background:var(--rdd);color:var(--rd);}
+  .opt.bad .l{background:var(--rd);border-color:var(--rd);color:#fff;}
+  .opt.hint{border-color:var(--gr);opacity:.65;}
+  .opt:disabled{cursor:default;}
+  .exp{display:none;margin:0 24px 20px;padding:14px 16px;border-radius:12px;font-size:14px;line-height:1.6;font-weight:600;}
+  .exp.show{display:block;}
+  .exp.oke{background:var(--gd);color:var(--gr);border:1px solid var(--gr);}
+  .exp.bade{background:var(--rdd);color:#ff7b73;border:1px solid var(--rd);}
+  .nav{display:flex;justify-content:flex-end;padding:0 24px 20px;}
+  .nxt{background:linear-gradient(135deg,var(--te),var(--bl));color:#000;border:none;border-radius:12px;padding:12px 28px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;display:none;}
+  .nxt:hover{transform:translateY(-1px);}
+  .nxt.show{display:block;}
+  .rc{max-width:680px;margin:0 auto;background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:40px 32px;text-align:center;display:none;animation:su .5s ease both;}
+  .rc.show{display:block;}
+  .re{font-size:64px;margin-bottom:16px;}
+  .rs{font-size:56px;font-weight:900;font-family:'JetBrains Mono',monospace;margin-bottom:8px;}
+  .rl{font-size:18px;color:var(--mt);margin-bottom:28px;}
+  .rbars{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+  .rr{display:flex;align-items:center;gap:12px;text-align:left;}
+  .rr span:first-child{width:130px;font-size:13px;color:var(--mt);flex-shrink:0;}
+  .rt{flex:1;height:8px;background:var(--sf2);border-radius:99px;overflow:hidden;}
+  .rf{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--te),var(--bl));transition:width 1s cubic-bezier(.4,0,.2,1) .2s;width:0;}
+  .rr span:last-child{width:20px;font-size:13px;font-family:'JetBrains Mono',monospace;color:var(--mt);}
+  .rtb{background:transparent;border:1.5px solid var(--te);color:var(--te);border-radius:12px;padding:12px 32px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;}
+  .rtb:hover{background:var(--te);color:#000;}
+  @keyframes fd{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+  @keyframes su{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="badge">8-сынып · Физика · Оптика</div>
+  <h1>Көз — оптикалық<br>жүйе</h1>
+  <p>5 сұрақ · Жауабыңды таңдаңыз</p>
+</div>
+<div class="pw">
+  <div class="pm"><span id="pl">1 / 5 сұрақ</span><span id="ps">0 дұрыс</span></div>
+  <div class="pb"><div class="pf" id="pf"></div></div>
+</div>
+
+<!-- Q1 -->
+<div class="card active" id="q1">
+  <div class="ch"><div class="qn">01</div><div><div class="qt">Адам көзінде кескін қайда пайда болады және ол қандай?</div><div class="qs">Көздің оптикалық жүйесін еске түсір</div></div></div>
+  <div class="dw">
+    <svg width="460" height="175" viewBox="0 0 460 175">
+      <defs><marker id="a" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#39D3BB"/></marker></defs>
+      <ellipse cx="280" cy="90" rx="80" ry="62" fill="none" stroke="#30363D" stroke-width="2"/>
+      <ellipse cx="264" cy="90" rx="25" ry="25" fill="#0D2045" stroke="#58A6FF" stroke-width="1.5"/>
+      <text x="264" y="94" text-anchor="middle" font-size="11" fill="#58A6FF" font-family="Nunito">линза</text>
+      <line x1="349" y1="46" x2="349" y2="134" stroke="#F85149" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="358" y="90" font-size="11" fill="#F85149" font-family="Nunito">торлы</text>
+      <text x="358" y="103" font-size="11" fill="#F85149" font-family="Nunito">қабат</text>
+      <line x1="40" y1="90" x2="200" y2="90" stroke="#30363D" stroke-width="1.5"/>
+      <line x1="60" y1="65" x2="264" y2="76" stroke="#39D3BB" stroke-width="1.5"/>
+      <line x1="60" y1="90" x2="264" y2="90" stroke="#39D3BB" stroke-width="1.5"/>
+      <line x1="264" y1="76" x2="349" y2="106" stroke="#39D3BB" stroke-width="1.5" marker-end="url(#a)"/>
+      <line x1="264" y1="90" x2="349" y2="106" stroke="#39D3BB" stroke-width="1.5" marker-end="url(#a)"/>
+      <circle cx="349" cy="106" r="5" fill="#3FB950"/>
+      <line x1="65" y1="65" x2="65" y2="115" stroke="#D29922" stroke-width="2.5"/>
+      <polygon points="65,65 58,78 72,78" fill="#D29922"/>
+      <text x="28" y="62" font-size="11" fill="#D29922" font-family="Nunito">Зат A</text>
+      <text x="50" y="157" font-size="12" text-anchor="middle" fill="#7D8590" font-family="Nunito">Жарық линза арқылы сынып, торлы қабатқа жетеді</text>
+    </svg>
+  </div>
+  <div class="opts">
+    <button class="opt" onclick="ans(1,this,false)"><span class="l">A</span>Мөлдір қабықта, тік және үлкейген</button>
+    <button class="opt" onclick="ans(1,this,false)"><span class="l">B</span>Линзада, виртуалды және тік</button>
+    <button class="opt" onclick="ans(1,this,true)"><span class="l">C</span>Торлы қабатта, нақты және аударылған</button>
+    <button class="opt" onclick="ans(1,this,false)"><span class="l">D</span>Көз алмасының ортасында</button>
+  </div>
+  <div class="exp" id="e1">Жарық линза арқылы сынып, торлы қабатта (сетчаткада) нақты, аударылған кескін береді. Мидың көру бөлімі сигналды өңдеп, кескінді "тік" деп қабылдайды.</div>
+  <div class="nav"><button class="nxt" id="n1" onclick="nxt(1)">Келесі →</button></div>
+</div>
+
+<!-- Q2 -->
+<div class="card" id="q2">
+  <div class="ch"><div class="qn">02</div><div><div class="qt">Миопия (қысқа көрушілік) кезінде кескін қайда түседі және неліктен алыс бұлыңғыр?</div><div class="qs">Торлы қабаттың орнымен салыстыр</div></div></div>
+  <div class="dw">
+    <svg width="460" height="190" viewBox="0 0 460 190">
+      <text x="230" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#F85149" font-family="Nunito">Миопия — қысқа көрушілік</text>
+      <ellipse cx="280" cy="100" rx="85" ry="65" fill="none" stroke="#30363D" stroke-width="2"/>
+      <ellipse cx="262" cy="100" rx="28" ry="28" fill="#0D2045" stroke="#58A6FF" stroke-width="1.5"/>
+      <text x="262" y="104" text-anchor="middle" font-size="11" fill="#58A6FF" font-family="Nunito">линза</text>
+      <line x1="354" y1="52" x2="354" y2="148" stroke="#3FB950" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="362" y="102" font-size="11" fill="#3FB950" font-family="Nunito">торлы</text>
+      <text x="362" y="115" font-size="11" fill="#3FB950" font-family="Nunito">қабат</text>
+      <line x1="50" y1="100" x2="200" y2="100" stroke="#30363D" stroke-width="1.5"/>
+      <line x1="60" y1="72" x2="262" y2="85" stroke="#58A6FF" stroke-width="1.5"/>
+      <line x1="60" y1="100" x2="262" y2="100" stroke="#58A6FF" stroke-width="1.5"/>
+      <line x1="262" y1="85" x2="316" y2="112" stroke="#58A6FF" stroke-width="1.5"/>
+      <line x1="262" y1="100" x2="316" y2="112" stroke="#58A6FF" stroke-width="1.5"/>
+      <circle cx="316" cy="112" r="6" fill="#F85149"/>
+      <text x="295" y="135" font-size="11" fill="#F85149" font-family="Nunito">фокус (қате орын)</text>
+      <line x1="316" y1="112" x2="354" y2="116" stroke="#F85149" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="50" y="174" font-size="12" fill="#7D8590" font-family="Nunito">Торлы қабатқа дейін жетпей, алдыңда фокус пайда болады</text>
+      <line x1="60" y1="72" x2="60" y2="128" stroke="#D29922" stroke-width="2"/>
+      <polygon points="60,72 53,84 67,84" fill="#D29922"/>
+    </svg>
+  </div>
+  <div class="opts">
+    <button class="opt" onclick="ans(2,this,false)"><span class="l">A</span>Торлы қабатта дәл — алыс та, жақын да бұлыңғыр</button>
+    <button class="opt" onclick="ans(2,this,true)"><span class="l">B</span>Торлы қабаттың алдында — алыстағы зат бұлыңғыр</button>
+    <button class="opt" onclick="ans(2,this,false)"><span class="l">C</span>Торлы қабаттың артында — жақындағы зат бұлыңғыр</button>
+    <button class="opt" onclick="ans(2,this,false)"><span class="l">D</span>Линзада — ештеңе анық емес</button>
+  </div>
+  <div class="exp" id="e2">Миопияда көз алмасы тым ұзын (немесе линза тым қатты сындырады). Кескін торлы қабатқа жетпей, алдында пайда болады. Жақын зат анық, алыстағы — бұлыңғыр көрінеді.</div>
+  <div class="nav"><button class="nxt" id="n2" onclick="nxt(2)">Келесі →</button></div>
+</div>
+
+<!-- Q3 -->
+<div class="card" id="q3">
+  <div class="ch"><div class="qn">03</div><div><div class="qt">Миопияны түзету үшін қандай линзалы очки тағайындалады? Неліктен?</div><div class="qs">Фокусты артқа жылжыту керек</div></div></div>
+  <div class="dw">
+    <svg width="460" height="180" viewBox="0 0 460 180">
+      <text x="230" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#3FB950" font-family="Nunito">Түзету — шашыратқыш линза</text>
+      <ellipse cx="330" cy="100" rx="80" ry="62" fill="none" stroke="#30363D" stroke-width="2"/>
+      <ellipse cx="314" cy="100" rx="26" ry="26" fill="#0D2045" stroke="#58A6FF" stroke-width="1.5"/>
+      <line x1="400" y1="56" x2="400" y2="144" stroke="#3FB950" stroke-width="2" stroke-dasharray="5,3"/>
+      <text x="408" y="102" font-size="11" fill="#3FB950" font-family="Nunito">торлы</text>
+      <text x="408" y="115" font-size="11" fill="#3FB950" font-family="Nunito">қабат</text>
+      <line x1="148" y1="68" x2="148" y2="132" stroke="#BC8CFF" stroke-width="3"/>
+      <polygon points="148,68 138,80 158,80" fill="none" stroke="#BC8CFF" stroke-width="2.5"/>
+      <polygon points="148,132 138,120 158,120" fill="none" stroke="#BC8CFF" stroke-width="2.5"/>
+      <text x="100" y="102" font-size="12" fill="#BC8CFF" font-family="Nunito" text-anchor="middle">Шашыр-</text>
+      <text x="100" y="116" font-size="12" fill="#BC8CFF" font-family="Nunito" text-anchor="middle">атқыш</text>
+      <text x="100" y="130" font-size="11" fill="#7D8590" font-family="Nunito" text-anchor="middle">(D &lt; 0)</text>
+      <line x1="50" y1="80" x2="148" y2="80" stroke="#58A6FF" stroke-width="1.5"/>
+      <line x1="50" y1="100" x2="148" y2="100" stroke="#58A6FF" stroke-width="1.5"/>
+      <line x1="148" y1="80" x2="200" y2="88" stroke="#58A6FF" stroke-width="1.5"/>
+      <line x1="148" y1="100" x2="200" y2="100" stroke="#58A6FF" stroke-width="1.5"/>
+      <line x1="200" y1="88" x2="314" y2="94" stroke="#58A6FF" stroke-width="1.5"/>
+      <line x1="200" y1="100" x2="314" y2="94" stroke="#58A6FF" stroke-width="1.5"/>
+      <line x1="314" y1="94" x2="400" y2="106" stroke="#58A6FF" stroke-width="1.5"/>
+      <circle cx="400" cy="106" r="5" fill="#3FB950"/>
+      <text x="230" y="165" text-anchor="middle" font-size="11" fill="#7D8590" font-family="Nunito">Шашыратқыш линза сәулелерді кеңейтіп, фокусты торлы қабатқа жеткізеді</text>
+    </svg>
+  </div>
+  <div class="opts">
+    <button class="opt" onclick="ans(3,this,false)"><span class="l">A</span>Жинақтаушы (D &gt; 0) — сәулелерді жинайды</button>
+    <button class="opt" onclick="ans(3,this,true)"><span class="l">B</span>Шашыратқыш (D &lt; 0) — фокусты артқа жылжытады</button>
+    <button class="opt" onclick="ans(3,this,false)"><span class="l">C</span>Жазық линза — сындырмайды</button>
+    <button class="opt" onclick="ans(3,this,false)"><span class="l">D</span>Екеуі де жарайды</button>
+  </div>
+  <div class="exp" id="e3">Шашыратқыш (ойыс) линза сәулелерді кеңейтіп, фокус нүктесін артқа жылжытады — дәл торлы қабатқа. Оптикалық күш D &lt; 0, фокус арақашықтығы f &lt; 0. Мысалы: −2 дптр, −3 дптр очки.</div>
+  <div class="nav"><button class="nxt" id="n3" onclick="nxt(3)">Келесі →</button></div>
+</div>
+
+<!-- Q4 -->
+<div class="card" id="q4">
+  <div class="ch"><div class="qn">04</div><div><div class="qt">Гиперметропия (ұзақ көрушілік) кезінде кескін қайда және қандай линза тағайындалады?</div><div class="qs">Миопиямен салыстырып ойла</div></div></div>
+  <div class="dw">
+    <svg width="460" height="195" viewBox="0 0 460 195">
+      <text x="230" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#D29922" font-family="Nunito">Миопия vs Гиперметропия</text>
+      <text x="110" y="40" text-anchor="middle" font-size="12" fill="#F85149" font-family="Nunito" font-weight="bold">Миопия</text>
+      <ellipse cx="110" cy="88" rx="58" ry="44" fill="none" stroke="#30363D" stroke-width="1.5"/>
+      <line x1="160" y1="58" x2="160" y2="118" stroke="#3FB950" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <circle cx="136" cy="96" r="5" fill="#F85149"/>
+      <text x="110" y="143" text-anchor="middle" font-size="11" fill="#F85149" font-family="Nunito">фокус алдында</text>
+      <text x="110" y="157" text-anchor="middle" font-size="11" fill="#7D8590" font-family="Nunito">→ шашыратқыш (D&lt;0)</text>
+      <line x1="215" y1="30" x2="215" y2="180" stroke="#30363D" stroke-width="0.5"/>
+      <text x="350" y="40" text-anchor="middle" font-size="12" fill="#D29922" font-family="Nunito" font-weight="bold">Гиперметропия</text>
+      <ellipse cx="350" cy="88" rx="58" ry="44" fill="none" stroke="#30363D" stroke-width="1.5"/>
+      <line x1="400" y1="58" x2="400" y2="118" stroke="#3FB950" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <circle cx="422" cy="96" r="5" fill="#D29922"/>
+      <line x1="400" y1="96" x2="422" y2="96" stroke="#D29922" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="350" y="143" text-anchor="middle" font-size="11" fill="#D29922" font-family="Nunito">фокус артында</text>
+      <text x="350" y="157" text-anchor="middle" font-size="11" fill="#7D8590" font-family="Nunito">→ жинақтаушы (D&gt;0)</text>
+      <text x="230" y="182" text-anchor="middle" font-size="11" fill="#7D8590" font-family="Nunito">Екеуінде де очки фокусты торлы қабатқа жылжытады</text>
+    </svg>
+  </div>
+  <div class="opts">
+    <button class="opt" onclick="ans(4,this,false)"><span class="l">A</span>Торлы қабатта, жинақтаушы линза</button>
+    <button class="opt" onclick="ans(4,this,false)"><span class="l">B</span>Алдында, жинақтаушы линза</button>
+    <button class="opt" onclick="ans(4,this,true)"><span class="l">C</span>Артында, жинақтаушы линза</button>
+    <button class="opt" onclick="ans(4,this,false)"><span class="l">D</span>Артында, шашыратқыш линза</button>
+  </div>
+  <div class="exp" id="e4">Гиперметропияда көз алмасы тым қысқа — кескін торлы қабаттан артта пайда болады. Жинақтаушы (дөңес) линза D &gt; 0 сәулелерді жинап, фокусты алдыға тартады. Жақынды оқу қиын болады.</div>
+  <div class="nav"><button class="nxt" id="n4" onclick="nxt(4)">Келесі →</button></div>
+</div>
+
+<!-- Q5 -->
+<div class="card" id="q5">
+  <div class="ch"><div class="qn">05</div><div><div class="qt">Аккомодация деген не? Сол арқылы көз алыс та, жақын да затты анық көреді — бұл қалай жұмыс істейді?</div><div class="qs">Линза физикасымен ойла</div></div></div>
+  <div class="dw">
+    <svg width="460" height="185" viewBox="0 0 460 185">
+      <text x="230" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#BC8CFF" font-family="Nunito">Аккомодация механизмі</text>
+      <text x="100" y="42" text-anchor="middle" font-size="12" fill="#58A6FF" font-family="Nunito" font-weight="bold">Жақын зат</text>
+      <ellipse cx="100" cy="95" rx="60" ry="48" fill="none" stroke="#30363D" stroke-width="1.5"/>
+      <ellipse cx="82" cy="95" rx="20" ry="20" fill="#0D2045" stroke="#58A6FF" stroke-width="2"/>
+      <text x="82" y="99" text-anchor="middle" font-size="10" fill="#58A6FF" font-family="Nunito">домалақ</text>
+      <line x1="150" y1="62" x2="150" y2="128" stroke="#3FB950" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <circle cx="150" cy="99" r="4" fill="#3FB950"/>
+      <text x="100" y="156" text-anchor="middle" font-size="11" fill="#58A6FF" font-family="Nunito">Линза шоғырланған</text>
+      <text x="100" y="170" text-anchor="middle" font-size="11" fill="#7D8590" font-family="Nunito">f кіші, D үлкен</text>
+      <line x1="215" y1="35" x2="215" y2="180" stroke="#30363D" stroke-width="0.5"/>
+      <text x="355" y="42" text-anchor="middle" font-size="12" fill="#39D3BB" font-family="Nunito" font-weight="bold">Алыс зат</text>
+      <ellipse cx="355" cy="95" rx="60" ry="48" fill="none" stroke="#30363D" stroke-width="1.5"/>
+      <ellipse cx="337" cy="95" rx="14" ry="22" fill="#0D2045" stroke="#30363D" stroke-width="1.5"/>
+      <text x="337" y="99" text-anchor="middle" font-size="10" fill="#7D8590" font-family="Nunito">жазық</text>
+      <line x1="405" y1="62" x2="405" y2="128" stroke="#3FB950" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <circle cx="405" cy="99" r="4" fill="#3FB950"/>
+      <text x="355" y="156" text-anchor="middle" font-size="11" fill="#39D3BB" font-family="Nunito">Линза жазылған</text>
+      <text x="355" y="170" text-anchor="middle" font-size="11" fill="#7D8590" font-family="Nunito">f үлкен, D кіші</text>
+    </svg>
+  </div>
+  <div class="opts">
+    <button class="opt" onclick="ans(5,this,false)"><span class="l">A</span>Торлы қабат алдыға-артқа жылжиды</button>
+    <button class="opt" onclick="ans(5,this,false)"><span class="l">B</span>Көздің диаметрі кішірейеді</button>
+    <button class="opt" onclick="ans(5,this,true)"><span class="l">C</span>Линзаның қисықтығы өзгеріп, фокус арақашықтығы реттеледі</button>
+    <button class="opt" onclick="ans(5,this,false)"><span class="l">D</span>Жарықтың жылдамдығы өзгереді</button>
+  </div>
+  <div class="exp" id="e5">Аккомодация — көз бұлшықеттері линзаның пішінін өзгертеді. Жақын затта линза домалақтанып (f кіші, D үлкен), алыс затта жазылады (f үлкен, D кіші). Жасқа байланысты бұл қабілет әлсірейді — пресбиопия пайда болады!</div>
+  <div class="nav"><button class="nxt" id="n5" onclick="showRes()">Нәтижені көру 🏁</button></div>
+</div>
+
+<!-- Result -->
+<div class="rc" id="result">
+  <div class="re" id="re">🎉</div>
+  <div class="rs" id="rs" style="color:var(--te)">0/5</div>
+  <div class="rl" id="rl">Нәтиже</div>
+  <div class="rbars" id="rb"></div>
+  <button class="rtb" onclick="retry()">🔄 Қайта тапсыру</button>
+</div>
+
+<script>
+let sc=0,done=[0,0,0,0,0];
+const ci={1:2,2:1,3:1,4:2,5:2};
+const L=['A','B','C','D'];
+
+function ans(n,btn,ok){
+  if(done[n-1])return;done[n-1]=1;
+  const c=document.getElementById('q'+n);
+  c.querySelectorAll('.opt').forEach(o=>o.disabled=true);
+  const exp=document.getElementById('e'+n),nb=document.getElementById('n'+n);
+  if(ok){btn.classList.add('ok');sc++;document.getElementById('ps').textContent=sc+' дұрыс';exp.classList.add('show','oke');exp.textContent='✅ Дұрыс! '+exp.textContent;}
+  else{btn.classList.add('bad');c.querySelectorAll('.opt')[ci[n]].classList.add('hint');exp.classList.add('show','bade');exp.textContent='❌ Қате. Дұрыс: '+L[ci[n]]+'. '+exp.textContent;}
+  nb.classList.add('show');
+  document.getElementById('pf').style.width=(n/5*100)+'%';
+  document.getElementById('pl').textContent=n+' / 5 сұрақ';
+}
+
+function nxt(n){
+  document.getElementById('q'+n).classList.remove('active');
+  if(n<5){document.getElementById('q'+(n+1)).classList.add('active');document.getElementById('pl').textContent=(n+1)+' / 5 сұрақ';}
+}
+
+function showRes(){
+  document.getElementById('q5').classList.remove('active');
+  const r=document.getElementById('result');r.classList.add('show');
+  const p=sc/5;let e,l,col;
+  if(p===1){e='🏆';l='Керемет! Барлығы дұрыс!';col='var(--ye)';}
+  else if(p>=.8){e='🎉';l='Өте жақсы!';col='var(--gr)';}
+  else if(p>=.6){e='👍';l='Жақсы, бірақ қайталай!';col='var(--bl)';}
+  else{e='📚';l='Тақырыпты қайта оқы!';col='var(--rd)';}
+  document.getElementById('re').textContent=e;
+  document.getElementById('rs').textContent=sc+'/5';document.getElementById('rs').style.color=col;
+  document.getElementById('rl').textContent=l;
+  const qs=['Кескін орны','Миопия','Миопия түзету','Гиперметропия','Аккомодация'];
+  const rb=document.getElementById('rb');rb.innerHTML='';
+  qs.forEach((q,i)=>{
+    const row=document.createElement('div');row.className='rr';
+    row.innerHTML='<span>'+q+'</span><div class="rt"><div class="rf"></div></div><span>'+(i<sc?'✓':'✗')+'</span>';
+    rb.appendChild(row);
+    setTimeout(()=>row.querySelector('.rf').style.width='100%',150+i*80);
+  });
+  document.getElementById('pf').style.width='100%';
+  document.getElementById('pl').textContent='5 / 5 сұрақ';
+}
+
+function retry(){
+  sc=0;done=[0,0,0,0,0];
+  document.getElementById('ps').textContent='0 дұрыс';
+  document.getElementById('pf').style.width='0%';
+  document.getElementById('pl').textContent='1 / 5 сұрақ';
+  document.getElementById('result').classList.remove('show');
+  for(let i=1;i<=5;i++){
+    const c=document.getElementById('q'+i);
+    c.classList.remove('active');
+    c.querySelectorAll('.opt').forEach(o=>{o.disabled=false;o.className='opt';});
+    const e=document.getElementById('e'+i);
+    e.classList.remove('show','oke','bade');
+    e.textContent=e.textContent.replace(/^[✅❌]\s*(Дұрыс!\s*|Қате\.\s*Дұрыс:\s*[A-D]\.\s*)/,'');
+    document.getElementById('n'+i).classList.remove('show');
+  }
+  document.getElementById('q1').classList.add('active');
+}
+</script>
+</body>
+</html>
